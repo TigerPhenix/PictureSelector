@@ -17,9 +17,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.BitmapTypeRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.luck.picture.lib.R;
 import com.luck.picture.lib.anim.OptAnimationLoader;
 import com.luck.picture.lib.config.PictureConfig;
@@ -186,19 +186,19 @@ public class PictureImageGridAdapter extends RecyclerView.Adapter<RecyclerView.V
             if (mimeType == PictureMimeType.ofAudio()) {
                 contentHolder.iv_picture.setImageResource(R.drawable.audio_placeholder);
             } else {
-                RequestOptions options = new RequestOptions();
-                if (overrideWidth <= 0 && overrideHeight <= 0) {
-                    options.sizeMultiplier(sizeMultiplier);
-                } else {
-                    options.override(overrideWidth, overrideHeight);
-                }
-                options.diskCacheStrategy(DiskCacheStrategy.ALL);
-                options.centerCrop();
-                options.placeholder(R.drawable.image_placeholder);
-                Glide.with(context)
-                        .asBitmap()
+              BitmapTypeRequest request= Glide.with(context)
                         .load(path)
-                        .apply(options)
+                        .asBitmap();
+                if (overrideWidth <= 0 && overrideHeight <= 0) {
+                    request.sizeMultiplier(sizeMultiplier);
+                } else {
+                    request.override(overrideWidth, overrideHeight);
+                }
+
+                request
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop()
+                .placeholder(R.drawable.image_placeholder)
                         .into(contentHolder.iv_picture);
             }
             if (enablePreview || enablePreviewVideo || enablePreviewAudio) {
